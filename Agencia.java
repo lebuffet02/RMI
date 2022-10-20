@@ -1,39 +1,10 @@
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
-public class Agencia extends UnicastRemoteObject implements ProcessoAdministracao {
+public interface Agencia {
 
-
-    protected Agencia() throws RemoteException {
-    }
-
-    protected Agencia(int port) throws RemoteException {
-        super(port);
-    }
-
-
-    public void abrirConta() throws RemoteException {
-
-    }
-
-
-    public void fecharConta() throws RemoteException {
-
-    }
-
-
-    public String verificarConta(String conta) throws RemoteException {
-        return null;
-    }
-
-
-    public void sacar() {
-
-    }
-
-
-    public void depositar() {
-
-    }
-
+    void abrirConta() throws RemoteException;
+    void fecharConta() throws RemoteException;
+    void verificarConta(String conta) throws RemoteException;
+    void sacar(double saldo) throws RemoteException;
+    void depositar(double saldo) throws RemoteException;
 }
