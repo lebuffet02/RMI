@@ -1,36 +1,54 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProcessoAdministracao extends UnicastRemoteObject implements Agencia {
 
     private double saldo;
-    private Conta conta;
+    //private Conta conta;
+    private List<Conta> contas;
 
     protected ProcessoAdministracao() throws RemoteException {}
 
     protected ProcessoAdministracao(int port, double saldo, Conta conta) throws RemoteException {
         super(port);
         this.saldo = saldo;
-        this.conta = conta;
+        this.contas = new ArrayList<>();
 
     }
 
     @Override
-    public Conta abrirConta(String nomeConta, int idConta) throws RemoteException {
+    public Conta abrirConta(Conta conta) throws RemoteException {
         //validar para ver se n existe uma conta que já está aberta
-        return new Conta(nomeConta, idConta);
+        //return new Conta(nomeConta, idConta);
+        this.contas.add(conta);
+        return (Conta) this.contas;
     }
 
     @Override
-    public void fecharConta() throws RemoteException {
-        if(conta != null) {
-            conta = null;
+    public void verificarConta(String idConta) throws RemoteException {
+        for (Conta c : this.contas) {
+            if (idConta != null && !idConta.isEmpty()) {
+                if(c.getIdConta().equals(idConta)) {
+
+                }
+            }
         }
     }
 
     @Override
-    public void verificarConta(Conta conta) throws RemoteException {
-
+    public List<Conta> fecharConta(String idConta) throws RemoteException {
+        for (Conta c : this.contas) {
+            if(idConta != null && !idConta.isEmpty()) {
+                if (c.getIdConta().equals(idConta)) {
+                    this.contas.remove(c);
+                    System.out.println("Conta Fechada!");
+                    return contas;
+                }
+            }
+        }
+        return contas;
     }
 
     @Override
@@ -47,8 +65,5 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
     public void depositar(double saldo) throws RemoteException {
         this.saldo += saldo;
         System.out.println("Saldo Atual: " + this.saldo);
-
     }
-
-
 }
