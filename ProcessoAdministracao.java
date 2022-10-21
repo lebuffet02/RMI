@@ -1,12 +1,12 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ProcessoAdministracao extends UnicastRemoteObject implements Agencia {
 
     private double saldo;
-    //private Conta conta;
     private List<Conta> contas;
 
     protected ProcessoAdministracao() throws RemoteException {}
@@ -15,26 +15,22 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
         super(port);
         this.saldo = saldo;
         this.contas = new ArrayList<>();
-
     }
 
     @Override
-    public Conta abrirConta(Conta conta) throws RemoteException {
+    public Conta abrirConta(Conta conta, String idConta) throws RemoteException {
         //validar para ver se n existe uma conta que já está aberta
         //return new Conta(nomeConta, idConta);
-        this.contas.add(conta);
-        return (Conta) this.contas;
+        if (!conta.getIdConta().equals(idConta)) {
+            this.contas.add(conta);
+            return (Conta) this.contas;
+        }
+        return null;
     }
 
     @Override
-    public void verificarConta(String idConta) throws RemoteException {
-        for (Conta c : this.contas) {
-            if (idConta != null && !idConta.isEmpty()) {
-                if(c.getIdConta().equals(idConta)) {
-
-                }
-            }
-        }
+    public List<Conta> verificarContas() throws RemoteException {
+        return contas;
     }
 
     @Override
@@ -52,12 +48,12 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
     }
 
     @Override
-    public void sacar(double saldo) throws RemoteException {
-        if(this.saldo > 0.0) {
+    public void sacar(double saldo, double limite) throws RemoteException {
+        if(this.saldo > 0.0 && this.saldo >= limite) {
             this.saldo -= saldo;
             System.out.println("Saldo Atual: " + this.saldo);
         } else {
-            throw new IllegalArgumentException("Saldo Insuficiente!");
+            throw new IllegalArgumentException("Saldo Insuficiente!" + this.saldo + " : é o saldo atual!");
         }
     }
 
