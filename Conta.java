@@ -8,6 +8,8 @@ public class Conta {
     private String idConta;
     private double limite;
 
+    public Conta(){}
+
     public Conta(double saldo, String cpf, String idConta, double limite) {
         if(!cpf.isEmpty() && idConta != null && !idConta.isEmpty()) {
             setIdConta(idConta);
@@ -34,8 +36,11 @@ public class Conta {
         return idConta;
     }
 
-    public void setCpf(String numero) {
-        this.cpf = numero;
+    public void setCpf(String cpf) {
+        int tamCpf = cpf.length();
+        if(!cpf.trim().isEmpty() && tamCpf == 11) {
+            this.cpf = cpf;
+        }
     }
 
     public String getCpf() {

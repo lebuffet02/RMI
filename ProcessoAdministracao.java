@@ -1,12 +1,11 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProcessoAdministracao extends UnicastRemoteObject implements Agencia {
 
     private List<Conta> contas;
+    static int NUM_CONTAS = 0;
 
     protected ProcessoAdministracao() throws RemoteException {}
 
@@ -25,6 +24,7 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
            }
            if (!contaExistente) {
               this.contas.add(conta);
+              NUM_CONTAS++;
            }
        }
         return true;
@@ -46,6 +46,7 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
                     }
                     else {
                         contas.remove(c);
+                        NUM_CONTAS--;
                         System.out.println("Conta Fechada!");
                     }
 
@@ -67,5 +68,10 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
     public void depositar(double valor, Conta conta) throws RemoteException {
         conta.setSaldo(conta.getSaldo() + valor);
         System.out.println("Saldo Atual: " + conta.getSaldo());
+    }
+
+    public boolean totalContasAtualmente() {
+        System.out.println("Atualmente existem " + NUM_CONTAS + " cadastradas no momento.");
+        return true;
     }
 }
