@@ -3,27 +3,30 @@ import java.util.StringJoiner;
 
 public class Conta {
 
-    private String numero;
+    private double saldo;
+    private String cpf;
     private String idConta;
     private double limite;
 
-    public Conta(String numero, String idConta, double limite) {
-        if(!numero.isEmpty() && idConta != null && !idConta.isEmpty()) {
-            if(this.idConta.trim().equals(idConta)) {
-                setIdConta(idConta);
-            }
-            this.numero = numero;
-            this.idConta = idConta;
-            this.limite = limite;
+    public Conta(double saldo, String cpf, String idConta, double limite) {
+        if(!cpf.isEmpty() && idConta != null && !idConta.isEmpty()) {
+            setIdConta(idConta);
         }
+        this.saldo = 0.0;
+        this.cpf = cpf;
+        this.idConta = idConta;
+        this.limite = limite;
+    }
+
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
+    }
+
+    public double getSaldo() {
+        return saldo;
     }
 
     public void setIdConta(String idConta) {
-        if(idConta.equals(this.idConta)) {
-            System.out.println("Conta de número " + idConta + " já existente!");
-            System.out.println("Consulte a nova conta gerada.");
-            this.idConta = String.valueOf((10 + (new Random().nextInt(999))));
-        }
         this.idConta = idConta;
     }
 
@@ -31,23 +34,12 @@ public class Conta {
         return idConta;
     }
 
-    public void setNumeroConta(String numero) {
-        //int converter = Integer.parseInt(numero);
-//        StringJoiner concat = new StringJoiner(".");
-//        if (!numero.isEmpty()) {
-//            for (int i = 0; i < numero.trim().length(); i++) {
-//                this.numero = String.valueOf(numero[i])
-//            }
-//        }
-        this.numero = numero;
+    public void setCpf(String numero) {
+        this.cpf = numero;
     }
 
-    public String getNomeConta() {
-        return numero;
-    }
-
-    public String consultarNovaConta(String contaAntiga) {
-        return contaAntiga = this.idConta;
+    public String getCpf() {
+        return cpf;
     }
 
     public void setLimite(double limite) {
@@ -56,5 +48,15 @@ public class Conta {
 
     public double getLimite() {
         return this.limite;
+    }
+
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "saldo=" + saldo +
+                ", cpf='" + cpf + '\'' +
+                ", idConta='" + idConta + '\'' +
+                ", limite=" + limite +
+                '}';
     }
 }
