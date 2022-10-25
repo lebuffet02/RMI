@@ -4,20 +4,13 @@ import java.util.StringJoiner;
 public class Conta {
 
     private double saldo;
-    private String cpf;
     private String idConta;
     private double limite;
 
-    public Conta(){}
-
-    public Conta(double saldo, String cpf, String idConta, double limite) {
-        if(!cpf.isEmpty() && idConta != null && !idConta.isEmpty()) {
-            setIdConta(idConta);
-        }
+    public Conta(String idConta) {
         this.saldo = 0.0;
-        this.cpf = cpf;
         this.idConta = idConta;
-        this.limite = limite;
+        this.limite = 1000.0;
     }
 
     public void setSaldo(double saldo) {
@@ -36,17 +29,6 @@ public class Conta {
         return idConta;
     }
 
-    public void setCpf(String cpf) {
-        int tamCpf = cpf.length();
-        if(!cpf.trim().isEmpty() && tamCpf == 11) {
-            this.cpf = cpf;
-        }
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
     public void setLimite(double limite) {
         this.limite = limite;
     }
@@ -59,7 +41,6 @@ public class Conta {
     public String toString() {
         return "Conta{" +
                 "saldo=" + saldo +
-                ", cpf='" + cpf + '\'' +
                 ", idConta='" + idConta + '\'' +
                 ", limite=" + limite +
                 '}';

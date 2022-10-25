@@ -5,7 +5,6 @@ import java.util.List;
 public class ProcessoAdministracao extends UnicastRemoteObject implements Agencia {
 
     private List<Conta> contas;
-    static int NUM_CONTAS = 0;
 
     protected ProcessoAdministracao() throws RemoteException {}
 
@@ -13,65 +12,78 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
         super();
     }
 
-    public boolean abrirConta(Conta conta) throws RemoteException {
-        boolean contaExistente = false;
-        if(conta != null) {
-           for (Conta c : contas) {
-               if (c.getIdConta().equals(conta.getIdConta())) {
-                   contaExistente = true;
-                  break;
-               }
-           }
-           if (!contaExistente) {
-              this.contas.add(conta);
-              NUM_CONTAS++;
-           }
-       }
-        return true;
+    public String checarIdConta(String idConta) throws RemoteException {
+        if (idConta != null) {
+            idConta = idConta.trim();
+            if (!idConta.isEmpty()) {
+                return idConta;
+            }
+        }
+        System.out.println("Valor do IdConta está errado.");
+        return null;
     }
 
-    public List<Conta> verificarContas() throws RemoteException {
-        return contas;
+    public void abrirConta(String idConta) throws RemoteException {
+        if (checarIdConta(idConta) != null) {
+            if (verificarConta(idConta) == null) {
+                this.contas.add(new Conta(idConta));
+            }
+        }
     }
 
-    public List<Conta> fecharConta(Conta conta) throws RemoteException {
-        if (conta != null) {
-            for (Conta c : contas) {
-                if (c.getIdConta().equals(conta.getIdConta())) {
-                    if (conta.getSaldo() > 0.0) {
-                        System.out.println("Conta não pode ser encerrada pois existe saldo positivo: " + conta.getSaldo());
-                    }
-                    else if (conta.getSaldo() < 0.0) {
-                        System.out.println("Conta não pode ser encerrada pois existe saldo negativo: " + conta.getSaldo());
-                    }
-                    else {
-                        contas.remove(c);
-                        NUM_CONTAS--;
-                        System.out.println("Conta Fechada!");
-                    }
-
+    public void fecharConta(String idConta) throws RemoteException { //passar string idConta e verificar na lista de contas se a string existe e se existir faz tudo
+        if (checarIdConta(idConta) != null) {
+            Conta conta = verificarConta(idConta);
+            if (conta != null) {
+                if (conta.getSaldo() > 0.0) {
+                    System.out.println("Conta não pode ser encerrada pois existe saldo positivo: " + conta.getSaldo());
+                } else if (conta.getSaldo() < 0.0) {
+                    System.out.println("Conta não pode ser encerrada pois existe saldo negativo: " + conta.getSaldo());
+                } else {
+                    contas.remove(conta);
+                    System.out.println("Conta Fechada!");
                 }
             }
         }
-        return contas;
     }
 
-    public void sacar(double valor, Conta conta) throws RemoteException {
-        if(conta.getSaldo() > 0.0 && valor > 0.0 && valor <= conta.getLimite() && valor <= conta.getSaldo()) {
-            conta.setSaldo(conta.getSaldo() - valor);
-            System.out.println("Saldo Atual: " + conta.getSaldo());
-        } else {
-            System.out.println("Saldo Insuficiente: " + conta.getSaldo() + ", é o saldo atual.");
+    public void sacar(double valor, String idConta) throws RemoteException {
+        if (checarIdConta(idConta) != null) {
+            Conta conta = verificarConta(idConta);
+            if (conta != null) {
+                if (conta.getSaldo() > 0.0 && valor > 0.0 && valor <= conta.getLimite() && valor <= conta.getSaldo()) {
+                    conta.setSaldo(conta.getSaldo() - valor);
+                    System.out.println("Saldo Atual: " + conta.getSaldo());
+                } else {
+                    System.out.println("Saldo Insuficiente: " + conta.getSaldo() + ", é o saldo atual.");
+                }
+            }
         }
     }
 
-    public void depositar(double valor, Conta conta) throws RemoteException {
-        conta.setSaldo(conta.getSaldo() + valor);
-        System.out.println("Saldo Atual: " + conta.getSaldo());
+    public void depositar(double valor, String idConta) throws RemoteException {
+        if (checarIdConta(idConta) != null) {
+            Conta conta = verificarConta(idConta);
+            if (conta != null) {
+                conta.setSaldo(conta.getSaldo() + valor);
+                System.out.println("Saldo Atual: " + conta.getSaldo());
+            }
+        }
     }
 
-    public boolean totalContasAtualmente() {
-        System.out.println("Atualmente existem " + NUM_CONTAS + " cadastradas no momento.");
-        return true;
+    public Conta verificarConta(String idConta) throws RemoteException {
+        if (checarIdConta(idConta) != null) {
+            for (Conta c : contas) {
+                if(c.getIdConta().equals(idConta)) {
+                    return c;
+                }
+            }
+        }
+        System.out.println("Conta Inexistente.");
+        return null;
+    }
+
+    public int totalContasAtualmente() {
+        return contas.size();
     }
 }
