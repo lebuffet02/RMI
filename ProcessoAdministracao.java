@@ -22,83 +22,65 @@ public class ProcessoAdministracao extends UnicastRemoteObject implements Agenci
         return chave + " adicionada.";
     }
 
-    public String checarIdConta(String idConta) throws RemoteException {
-        if (idConta != null) {
-            idConta = idConta.trim();
-            if (!idConta.isEmpty()) {
-                return idConta;
+    public Conta verificarConta(int id) throws RemoteException {
+        for (Conta c : contas) {
+            if(c.getIdConta() == id) {
+                return c;
             }
         }
-        System.out.println("Valor do IdConta está errado.");
+        System.out.println("Conta não existe ainda.");
         return null;
     }
 
-    public void abrirConta(String idConta, String chave) throws RemoteException {
-        if (!checarIdempotencia(chave).equals("chaveExistente")) {
-            if (checarIdConta(idConta) != null) {
-                if (verificarConta(idConta) == null) {
-                    this.contas.add(new Conta(idConta));
-                }
+    public String abrirConta(String chave, int id) throws RemoteException {
+        if (verificarConta(id) == null) {
+            if (!checarIdempotencia(chave).equals("chaveExistente")) {
+                this.contas.add(new Conta(id));
+                System.out.println("Conta Aberta com Sucesso");
             }
         }
+        return "Conta já existe.";
     }
 
-    public void fecharConta(String idConta, String chave) throws RemoteException {
-        if (!checarIdempotencia(chave).equals("chaveExistente")) {
-            if (checarIdConta(idConta) != null) {
-                Conta conta = verificarConta(idConta);
-                if (conta != null) {
-                    if (conta.getSaldo() > 0.0) {
-                        System.out.println("Conta não pode ser encerrada pois existe saldo positivo: " + conta.getSaldo());
-                    } else if (conta.getSaldo() < 0.0) {
-                        System.out.println("Conta não pode ser encerrada pois existe saldo negativo: " + conta.getSaldo());
-                    } else {
-                        contas.remove(conta);
-                        System.out.println("Conta Fechada!");
-                    }
-                }
+    public String fecharConta(int id) throws RemoteException {
+        Conta conta = verificarConta(id);
+        if (conta != null) {
+            if (conta.getSaldo() > 0.0) {
+                System.out.println("Conta não pode ser encerrada pois existe saldo positivo: " + conta.getSaldo());
+            } else if (conta.getSaldo() < 0.0) {
+                System.out.println("Conta não pode ser encerrada pois existe saldo negativo: " + conta.getSaldo());
+            } else {
+                contas.remove(conta);
+                System.out.println("Conta Fechada!");
             }
         }
+        return "Falha ao fechar a conta.";
     }
 
-    public void sacar(double valor, String idConta, String chave) throws RemoteException {
+    public String sacar(int id, double valor, String chave) throws RemoteException {
         if (!checarIdempotencia(chave).equals("chaveExistente")) {
-            if (checarIdConta(idConta) != null) {
-                Conta conta = verificarConta(idConta);
-                if (conta != null) {
-                    if (conta.getSaldo() > 0.0 && valor > 0.0 && valor <= conta.getLimite() && valor <= conta.getSaldo()) {
-                        conta.setSaldo(conta.getSaldo() - valor);
-                        System.out.println("Saldo Atual: " + conta.getSaldo());
-                    } else {
-                        System.out.println("Saldo Insuficiente: " + conta.getSaldo() + ", é o saldo atual.");
-                    }
-                }
-            }
-        }
-    }
-
-    public void depositar(double valor, String idConta, String chave) throws RemoteException {
-        if (!checarIdempotencia(chave).equals("chaveExistente")) {
-            if (checarIdConta(idConta) != null) {
-                Conta conta = verificarConta(idConta);
-                if (conta != null) {
-                    conta.setSaldo(conta.getSaldo() + valor);
+            Conta conta = verificarConta(id);
+            if (conta != null) {
+                if (conta.getSaldo() > 0.0 && valor > 0.0 && valor <= conta.getLimite() && valor <= conta.getSaldo()) {
+                    conta.setSaldo(conta.getSaldo() - valor);
                     System.out.println("Saldo Atual: " + conta.getSaldo());
+                } else {
+                    System.out.println("Saldo Insuficiente: " + conta.getSaldo() + ", é o saldo atual.");
                 }
             }
         }
+        return "Problema ao sacar.";
     }
 
-    public Conta verificarConta(String idConta) throws RemoteException {
-        if (checarIdConta(idConta) != null) {
-            for (Conta c : contas) {
-                if(c.getIdConta().equals(idConta)) {
-                    return c;
-                }
+    public String depositar(int id, double valor, String chave) throws RemoteException {
+        if (!checarIdempotencia(chave).equals("chaveExistente")) {
+            Conta conta = verificarConta(id);
+            if (conta != null) {
+                conta.setSaldo(conta.getSaldo() + valor);
+                System.out.println("Saldo Atual: " + conta.getSaldo());
             }
         }
-        System.out.println("Conta Inexistente.");
-        return null;
+        return "problema ao depositar.";
     }
 
     public int totalContasAtualmente() {

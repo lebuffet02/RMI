@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface Agencia extends Remote {
 
-    void abrirConta(String idConta, String chave) throws RemoteException;
-    void fecharConta(String idConta, String chave) throws RemoteException;
-    Conta verificarConta(String idConta) throws RemoteException;
-    void sacar(double valor, String idConta, String chave) throws RemoteException;
-    void depositar(double valor, String idConta, String chave) throws RemoteException;
+    String abrirConta(String chave, int id) throws RemoteException;
+    String fecharConta(int id) throws RemoteException;
+    Conta verificarConta(int id) throws RemoteException;
+    String sacar(int id, double valor, String chave) throws RemoteException;
+    String depositar(int id, double valor, String chave) throws RemoteException;
     int totalContasAtualmente() throws RemoteException;
 }

@@ -4,10 +4,10 @@ import java.util.StringJoiner;
 public class Conta {
 
     private double saldo;
-    private String idConta;
+    private int idConta;
     private double limite;
 
-    public Conta(String idConta) {
+    public Conta(int idConta) {
         this.saldo = 0.0;
         this.idConta = idConta;
         this.limite = 1000.0;
@@ -21,11 +21,11 @@ public class Conta {
         return saldo;
     }
 
-    public void setIdConta(String idConta) {
+    public void setIdConta(int idConta) {
         this.idConta = idConta;
     }
 
-    public String getIdConta() {
+    public int getIdConta() {
         return idConta;
     }
 

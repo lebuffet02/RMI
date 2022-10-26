@@ -18,79 +18,85 @@ public class ClienteAgencia {
 
     public static void main(String[] args) {
 
-        String entradaIdConta = "";
-        String entradaValor = "";
-        String chave;
-        int numero = -1;
         Scanner resposta = new Scanner(System.in);
+        boolean finalizar = true;
+        int numero;
+        int val1;
+        int val2;
+        String chave;
 
         try {
             Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:1099/processoAdministracao");
 
-            do {
-                System.out.println("▸ Digite um número de 1 a 4:\n");
-                System.out.println("▸ Digite 1 para abrir uma conta.");
-                System.out.println("▸ Digite 2 para fechar uma conta.");
-                System.out.println("▸ Digite 3 para verificar a conta com as suas informações.");
-                System.out.println("▸ Digite 4 para sacar.");
-                System.out.println("▸ Digite 5 para depositar.");
-                System.out.println("▸ Digite 6 para ver o total de contas.");
-                System.out.println("▸ Digite 0 para sair do programa.\n");
+            System.out.println("▸ Digite 1 para abrir uma conta.");
+            System.out.println("▸ Digite 2 para fechar uma conta.");
+            System.out.println("▸ Digite 3 para verificar a conta com as suas informações.");
+            System.out.println("▸ Digite 4 para sacar.");
+            System.out.println("▸ Digite 5 para depositar.");
+            System.out.println("▸ Digite 6 para ver o total de contas.");
+            System.out.println("▸ Digite 0 para sair do programa.\n");
+
+            while (finalizar) {
 
                 numero = resposta.nextInt();
                 switch (numero) {
                     case 1: {
+                        System.out.println("Abrir Conta - Insira um id para essa conta.");
+                        val1 = resposta.nextInt();
                         chave = idempotencia();
-                        System.out.println("Insira os dados para abrir a conta.");
-                        System.out.println("Insira um id para essa conta.");
-                        entradaIdConta = resposta.nextLine();
-                        agencia.abrirConta(entradaIdConta, chave);
+                        agencia.abrirConta(chave, val1);
+                        break;
                     }
                     case 2: {
-                        chave = idempotencia();
-                        System.out.println("Insira os dados para fechar a conta.");
-                        System.out.println("Insira o id dessa conta para fechá-la.");
-                        entradaIdConta = resposta.nextLine();
-                        agencia.fecharConta(entradaIdConta, chave);
+                        System.out.println("Fechar Conta - Insira o id dessa conta para fechá-la.");
+                        val1 = resposta.nextInt();
+                        agencia.fecharConta(val1);
+                        break;
                     }
                     case 3: {
-                        System.out.println("Insira o id da conta:");
-                        entradaIdConta = resposta.nextLine();
-                        System.out.println(agencia.verificarConta(entradaIdConta).toString());
+                        System.out.println("Verificar - Insira o id da conta:");
+                        val1 = resposta.nextInt();
+                        agencia.verificarConta(val1);
                         break;
                     }
                     case 4: {
+                        System.out.println("Sacar - Insira o id da conta:");
+                        val1 = resposta.nextInt();
+                        System.out.println("Sacar - Informe o valor a ser sacado.");
+                        val2 = resposta.nextInt();
                         chave = idempotencia();
-                        System.out.println("Insira o id da conta:");
-                        entradaIdConta = resposta.nextLine();
-                        System.out.println("Informe o valor a ser sacado.");
-                        entradaValor = resposta.nextLine();
-                        if(agencia.verificarConta(entradaIdConta) != null) {
-                            agencia.sacar(Double.parseDouble(entradaValor), entradaIdConta, chave);
+                        if (agencia.verificarConta(val1) != null) {
+                            agencia.sacar(val1, val2, chave);
+                            break;
                         }
                     }
                     case 5: {
+                        System.out.println("Depositar - Insira o id da conta:");
+                        val1 = resposta.nextInt();
+                        System.out.println("Depositar - Informe o valor a ser depositado.");
+                        val2 = resposta.nextInt();
                         chave = idempotencia();
-                        System.out.println("Insira o id da conta:");
-                        entradaIdConta = resposta.nextLine();
-                        System.out.println("Informe o valor a ser depositado.");
-                        entradaValor = resposta.nextLine();
-                        if(agencia.verificarConta(entradaIdConta) != null) {
-                            agencia.depositar(Double.parseDouble(entradaValor), entradaIdConta, chave);
+                        if (agencia.verificarConta(val1) != null) {
+                            agencia.depositar(val1, val2, chave);
+                            break;
                         }
                     }
                     case 6: {
-                        System.out.println("Número de contas abertas: " + agencia.totalContasAtualmente());
+                        System.out.println("Número de contas abertas: " + agencia.totalContasAtualmente() + "\n");
+                        finalizar = false;
+                        break;
+                    }
+                    case 0: {
+                        System.out.println("Programa Encerrado.");
+                        finalizar = false;
                     }
                     default: {
                         System.out.println("Valor Inválido!");
                         break;
                     }
                 }
-            } while (numero != 0);
+            }
             System.out.println("Programa encerrado!");
-            resposta.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
