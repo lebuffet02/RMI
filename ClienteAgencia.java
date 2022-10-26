@@ -2,31 +2,30 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Scanner;
 
 public class ClienteAgencia {
 
     protected static String idempotencia() {
         String agenciaIdempotencia = "agencia101";
-        Instant instant = Instant.now();
-        return agenciaIdempotencia + "" + instant;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy ' no horário: ' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+        return agenciaIdempotencia + "" + formatter.format(date);
     }
 
-    public static void main(String[] args) throws MalformedURLException, NotBoundException, RemoteException {
+    public static void main(String[] args) {
 
-        if (args.length == 1) {
-            System.err.println("\n Usage:\t java-Cliente\n");
-            System.exit(1);
-        }
-        Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:1099/processoAdministracao");
         String entradaIdConta = "";
         String entradaValor = "";
         String chave;
         int numero = -1;
+        Scanner resposta = new Scanner(System.in);
 
         try {
-            Scanner resposta = new Scanner(System.in);
+            Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:1099/processoAdministracao");
 
             do {
                 System.out.println("▸ Digite um número de 1 a 4:\n");

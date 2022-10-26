@@ -1,7 +1,4 @@
-import java.net.MalformedURLException;
 import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.time.Instant;
 import java.util.Scanner;
 
@@ -13,15 +10,16 @@ public class CaixaEletronico {
         return agenciaIdempotencia + "" + instant;
     }
 
-    public static void main(String[] args) throws MalformedURLException, NotBoundException, RemoteException {
+    public static void main(String[] args) {
 
-        Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:1099/processoAdministracao");
         String entradaIdConta = "";
         String entradaValor = "";
         String chave;
+        Scanner resposta = new Scanner(System.in);
 
         try {
-            Scanner resposta = new Scanner(System.in);
+            Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:1099/processoAdministracao");
+
             int numero;
 
             do {
