@@ -2,17 +2,27 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.time.Instant;
 import java.util.Scanner;
 
 public class CaixaEletronico {
 
-    public static void main(String[] args) {
+    protected static String idempotencia() {
+        String agenciaIdempotencia = "agencia252";
+        Instant instant = Instant.now();
+        return agenciaIdempotencia + "" + instant;
+    }
+
+    public static void main(String[] args) throws MalformedURLException, NotBoundException, RemoteException {
+
+        Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:1099/processoAdministracao");
+        String entradaIdConta = "";
+        String entradaValor = "";
+        String chave;
 
         try {
             Scanner resposta = new Scanner(System.in);
-            Agencia agencia = (Agencia) Naming.lookup("rmi://localhost:8080/agencia");
             int numero;
-            String entradaIdConta, entradaValor;
 
             do {
                 System.out.println("▸ Digite um número de 1 a 4:\n");
@@ -25,18 +35,20 @@ public class CaixaEletronico {
 
                 switch (numero) {
                     case 1: {
+                        chave = idempotencia();
                         System.out.println("Insira o id da conta:");
                         entradaIdConta = resposta.nextLine();
                         System.out.println("Informe o valor a ser depositado.");
                         entradaValor = resposta.nextLine();
-                        agencia.depositar(Double.parseDouble(entradaValor), entradaIdConta);
+                        agencia.depositar(Double.parseDouble(entradaValor), entradaIdConta, chave);
                     }
                     case 2: {
+                        chave = idempotencia();
                         System.out.println("Insira o id da conta:");
                         entradaIdConta = resposta.nextLine();
                         System.out.println("Informe o valor a ser sacado.");
                         entradaValor = resposta.nextLine();
-                        agencia.depositar(Double.parseDouble(entradaValor), entradaIdConta);
+                        agencia.sacar(Double.parseDouble(entradaValor), entradaIdConta, chave);
                     }
                     case 3: {
                         System.out.println("Insira o id da conta:");
@@ -52,11 +64,9 @@ public class CaixaEletronico {
             } while (numero != 0);
             System.out.println("Programa encerrado!");
             resposta.close();
-        }
-        catch (RemoteException | MalformedURLException | NotBoundException e) {
-            if () {
 
-            }
+        } catch (Exception e) {
+           e.printStackTrace();
         }
     }
 }
