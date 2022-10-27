@@ -2,9 +2,8 @@ import java.rmi.Naming;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
-public class AgenciaClient {
+public class AgenciaCliente {
     public static String gerarChaveIdempotencia() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ssZ");
         Date date = new Date(System.currentTimeMillis());

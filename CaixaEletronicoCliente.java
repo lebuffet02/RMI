@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
-public class CaixaClient {
+public class CaixaEletronicoCliente {
     public static String gerarChaveIdempotencia() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ssZ");
         Date date = new Date(System.currentTimeMillis());

@@ -10,9 +10,9 @@ public class Administracao extends UnicastRemoteObject implements AdministracaoI
 	private List<Conta> contas = new ArrayList<>();
 	private List<String> chavesIdempotencia = new ArrayList<>();
 	protected class Conta {
-		public int numero;
-		public double saldo;
-		public double limite;
+		private int numero;
+		private double saldo;
+		private double limite;
 		public Conta(int numero, double saldo, double limite) {
 			this.numero = numero;
 			this.saldo = saldo;
@@ -28,11 +28,13 @@ public class Administracao extends UnicastRemoteObject implements AdministracaoI
 			else if(valor == 0.0) {
 				return "valor zero";
 			}
-			else if(this.saldo - valor < 0.0) {
+			else if((this.saldo - valor) < 0.0) {
 				return "saldo negativo";
 			}
-			this.saldo -= valor;
-			return "concluido";
+			else {
+				this.saldo -= valor;
+				return "concluido";
+			}
 		}
 		public boolean depositar(double valor) {
 			if(valor <= 0.0) {
@@ -98,7 +100,7 @@ public class Administracao extends UnicastRemoteObject implements AdministracaoI
 					if(!conta.depositar(valor)) {
 						return "Erro ao depositar.\nValores negativos não são permitidos.";
 					}
-					return String.format("Deposito realizado.\n%s", conta.toString());
+					return String.format("Depósito realizado.\n%s", conta.toString());
 				}
 			}
 			return "Conta não existente.";
@@ -109,19 +111,24 @@ public class Administracao extends UnicastRemoteObject implements AdministracaoI
 		if(validarIdempotencia(chaveIdempotencia)) {
 			for(Conta conta : this.contas) {
 				if(conta.numero == numeroConta) {
-					if(conta.sacar(valor).equals("limite")) {
-						return "Erro: valor para saque superior ao limite da conta.";
+					String resultado = conta.sacar(valor);
+					switch(resultado) {
+						case "limite": {
+							return "Erro: valor superior ao limite da conta para saque.";
+						}
+						case "valor negativo": {
+							return "Erro: valor negativo para saque.";
+						}
+						case "valor zero": {
+							return "Erro: nenhum valor para saque.";
+						}
+						case "saldo negativo": {
+							return "Erro: valor superior ao disponível na conta para saque.";
+						}
+						default: {
+							return String.format("Saque realizado.\n%s", conta.toString());
+						}
 					}
-					else if(conta.sacar(valor).equals("valor negativo")) {
-						return "Erro: valor negativo para saque.";
-					}
-					else if(conta.sacar(valor).equals("valor zero")) {
-						return "Erro: sem saldo para saque.";
-					}
-					else if(conta.sacar(valor).equals("saldo negativo")) {
-						return "Erro: valor superior ao disponível para saque.";
-					}
-					return String.format("Saque realizado.\n%s", conta.toString());
 				}
 			}
 			return "Conta não existente.";
